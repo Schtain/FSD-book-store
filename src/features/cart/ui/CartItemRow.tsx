@@ -10,7 +10,7 @@ export function CartItemRow({ cartItem }: CartItemRowProps) {
   const removeFromCart = useCartStore((state) => state.removeFromCart);
 
   return (
-    <div className="rounded-2xl p-4 sm:flex-row sm:items-center gap-4 max-w-170 flex w-full flex-col items-start justify-between border-2">
+    <div className="rounded-2xl p-4 sm:flex-row sm:items-center gap-4 max-w-170 md:hover:scale-105 md:hover:shadow-md ease-in-out flex w-full flex-col items-start justify-between border-2 transition-all duration-300">
       {/* Левая часть: Обложка и Описание */}
       <div className="gap-4 min-w-0 sm:w-auto flex w-full flex-1 items-center">
         {/* Обложка  */}
