@@ -1,4 +1,4 @@
-import { BookGrid } from "@/widgets";
+import { BookGrid } from "@/widgets/book-grid";
 import { type Book } from "@/enitites/book";
 
 const mockBooks: Book[] = [
