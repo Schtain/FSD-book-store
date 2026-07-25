@@ -1,5 +1,5 @@
-import { type Book } from '@/enitites/book'
-import { BookCard } from '@/enitites/book';
+import { type Book } from '@/entities/book'
+import { BookCard } from '@/entities/book';
 
 
 interface BookGridProps {
