@@ -1,4 +1,4 @@
-import { type Book } from '../model/types';
+import { type Book } from '../../model/types';
 
 interface BookCardProps {
   book: Book;
@@ -9,9 +9,9 @@ interface BookCardProps {
 
 export const BookCard = ({ book, actionButton }: BookCardProps) => {
   return (
-    <div className="md:flex-col bg-card text-card-foreground rounded-xl border-border p-3 gap-4 hover:shadow-md flex flex-row overflow-hidden border transition-all md:max-w-60">
+    <div className="md:flex-col bg-card text-card-foreground rounded-xl border-border p-3 gap-4 hover:shadow-md md:max-w-60 flex flex-row overflow-hidden border transition-all">
       {/* Обложка книги */}
-      <div className="w-24 h-36 md:w-full md:h-64 bg-muted rounded-md relative shrink-0 overflow-hidden ">
+      <div className="w-24 h-36 md:w-full md:h-64 bg-muted rounded-md relative shrink-0 overflow-hidden">
         <img
           src={book.imageUrl}
           alt={book.title}
@@ -36,7 +36,7 @@ export const BookCard = ({ book, actionButton }: BookCardProps) => {
           <span className="font-bold text-lg text-primary">{book.price} ₽</span>
 
           {/* Слот для будущей кнопки из слоя features */}
-           {actionButton && <div className="shrink-0">{actionButton}</div>}
+          {actionButton && <div className="shrink-0">{actionButton}</div>}
         </div>
       </div>
     </div>

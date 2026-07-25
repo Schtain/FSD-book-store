@@ -1,13 +1,9 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Outlet,
-  Link,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 
 import { Header } from '@/widgets/header';
 import { CatalogPage } from '@/pages/catalog/';
-import { HomePage } from '@/pages/home/HomePage';
+import { HomePage } from '@/pages/home/';
+import { CartPage } from '@/pages/cart';
 
 // import { AdminPage } from '@/pages/admin/';
 
@@ -36,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />,
+      },
+      {
+        path: '/cart',
+        element: <CartPage />,
       },
 
       //   {

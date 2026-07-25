@@ -1,7 +1,7 @@
 import type { Book } from "@/entities/book";
 import {create} from 'zustand'
 
-interface CartItemType extends Book {
+export interface CartItemType extends Book {
     quantity: number;
 }
 
