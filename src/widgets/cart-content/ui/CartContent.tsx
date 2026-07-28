@@ -1,6 +1,8 @@
 import { useCartStore } from '@/features/cart';
 import { Link } from 'react-router-dom';
 import { CartItemRow } from '@/features/cart/ui/CartItemRow';
+import { RemoveFromCartButton } from '@/features/cart';
+import { ToggleFavoriteButton } from '@/features/favorites';
 
 export function CartContent() {
   const cartItems = useCartStore((state) => state.items);
@@ -29,7 +31,16 @@ export function CartContent() {
   return (
     <div className="max-w-170 gap-4 p-4 md:p-6 mx-auto flex w-full flex-col">
       {cartItems.map((item) => (
-        <CartItemRow key={item.id} cartItem={item} />
+        <CartItemRow
+          key={item.id}
+          cartItem={item}
+          actions={
+            <>
+              <RemoveFromCartButton bookId={item.id} />
+              <ToggleFavoriteButton bookId={item.id} />
+            </>
+          }
+        />
       ))}
       <div className="sm:flex-row sm:items-start gap-6 mt-4 pt-4 flex flex-col items-stretch justify-between border-t-2">
         {/* ЛЕВЫЙ БЛОК */}
