@@ -1,9 +1,18 @@
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate,
+} from 'react-router-dom';
 
 import { Header } from '@/widgets/header';
 import { CatalogPage } from '@/pages/catalog/';
 import { HomePage } from '@/pages/home/';
 import { CartPage } from '@/pages/cart';
+import { RegisterPage } from '@/pages/register';
+import { LoginPage } from '@/pages/login';
+import { DashboardPage } from '@/pages/dashboard';
+import { CartContent } from '@/widgets/cart-content';
 
 // import { AdminPage } from '@/pages/admin/';
 
@@ -36,6 +45,25 @@ const router = createBrowserRouter([
       {
         path: '/cart',
         element: <CartPage />,
+      },
+      {
+        path: '/register',
+        element: <RegisterPage />,
+      },
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/dashboard',
+        element: <DashboardPage />,
+        children: [
+          { index: true, element: <Navigate to="cart" replace /> },
+          {
+            path: 'cart',
+            element: <CartContent />,
+          },
+        ],
       },
 
       //   {

@@ -3,9 +3,10 @@ import { useCartStore } from '../store/useCartStore';
 
 interface CartItemRowProps {
   cartItem: CartItemType;
+  actions?: React.ReactNode;
 }
 
-export function CartItemRow({ cartItem }: CartItemRowProps) {
+export function CartItemRow({ cartItem, actions }: CartItemRowProps) {
   const addToCart = useCartStore((state) => state.addToCart);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
 
@@ -33,30 +34,34 @@ export function CartItemRow({ cartItem }: CartItemRowProps) {
         </div>
       </div>
 
-      {/* Правая часть: Кнопки и Цена */}
-      <div className="sm:justify-end gap-4 sm:w-auto pt-2 sm:pt-0 sm:border-t-0 border-gray-100 flex w-full items-center justify-between border-t">
-        {/* Кнопки */}
-        <div className="flex items-center">
-          <button
-            className="h-8 w-8 rounded-l-2xl hover:bg-gray-50 flex cursor-pointer items-center justify-center border-2 active:scale-95"
-            onClick={() => removeFromCart(cartItem.id)}
-          >
-            -
-          </button>
-          <div className="h-8 w-8 text-sm font-semibold flex items-center justify-center border-y-2 text-center select-none">
-            {cartItem.quantity}
+      <div className="flex flex-col">
+        {/* Правая часть: Кнопки и Цена */}
+        <div className="sm:justify-end gap-4 sm:w-auto pt-2 sm:pt-0 sm:border-t-0 border-gray-100 flex w-full items-center justify-between border-t">
+          {/* Кнопки */}
+          <div className="flex items-center">
+            <button
+              className="h-8 w-8 rounded-l-2xl hover:bg-gray-50 flex cursor-pointer items-center justify-center border-2 active:scale-95"
+              onClick={() => removeFromCart(cartItem.id)}
+            >
+              -
+            </button>
+            <div className="h-8 w-8 text-sm font-semibold flex items-center justify-center border-y-2 text-center select-none">
+              {cartItem.quantity}
+            </div>
+            <button
+              className="h-8 w-8 rounded-r-2xl hover:bg-gray-50 flex cursor-pointer items-center justify-center border-2 active:scale-95"
+              onClick={() => addToCart(cartItem)}
+            >
+              +
+            </button>
           </div>
-          <button
-            className="h-8 w-8 rounded-r-2xl hover:bg-gray-50 flex cursor-pointer items-center justify-center border-2 active:scale-95"
-            onClick={() => addToCart(cartItem)}
-          >
-            +
-          </button>
-        </div>
 
-        <span className="text-xl font-bold min-w-20 text-right whitespace-nowrap">
-          {cartItem.price * cartItem.quantity} ₽
-        </span>
+          <span className="text-xl font-bold min-w-20 text-right whitespace-nowrap">
+            {cartItem.price * cartItem.quantity} ₽
+          </span>
+        </div>
+        {/* Actions */}
+        {actions && <div className="gap-2 mt-2 sm:mt-0 flex">{actions}</div>}
       </div>
     </div>
   );

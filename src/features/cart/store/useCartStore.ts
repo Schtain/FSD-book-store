@@ -10,6 +10,7 @@ interface CartState {
     items: CartItemType[];
     addToCart: (book: Book) => void;
     removeFromCart: (bookId: string) => void;
+    removeItemFromCart: (bookId: string) => void;
     clearCart: () => void;
 }
 
@@ -22,7 +23,7 @@ export const useCartStore = create<CartState>((set) => ({
 
             if (existtingItem) {
                 return {
-                    items: state.items.map(item => item.id === book.id ? {...item, quantity: item.quantity + 1} : {...item})
+                    items: state.items.map(item => item.id === book.id ? {...item, quantity: item.quantity + 1} : item)
                 }
             }
             return {
@@ -38,9 +39,15 @@ export const useCartStore = create<CartState>((set) => ({
                     [...state.items.map((item) => item.id === bookId ? {...item, quantity: item.quantity -1} : item)]
                 }
             } else {
-                return {items:[...state.items.filter(item => item.id !== bookId)]}
+                return state;
             }
         })
     },
+    removeItemFromCart: (bookId: string) => {
+        set(state => {
+             return {items: state.items.filter(item => item.id !== bookId)}
+        })
+    }
+    ,
     clearCart: () => set({items: []})
 }))

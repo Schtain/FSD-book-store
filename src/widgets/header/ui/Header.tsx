@@ -1,9 +1,12 @@
 import { useCartStore } from '@/features/cart';
 import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, LogIn } from 'lucide-react';
+import { useAuthStore } from '@/features/auth';
+import { LogoutButton } from '@/features/auth';
 
 export function Header() {
   const cartItems = useCartStore((state) => state.items);
+  const user = useAuthStore((state) => state.user);
 
   const cartItemsQuantity = cartItems
     ? cartItems.reduce((acc, book) => acc + book.quantity, 0)
@@ -42,19 +45,47 @@ export function Header() {
             </Link>
           </nav>
         </div>
+        {/* Икноки управления */}
 
-        {/* Корзина */}
-        <div className="gap-4 flex items-center">
-          <div className="p-2 hover:bg-muted relative flex cursor-pointer items-center rounded-full transition-colors">
-            <Link to="/cart">
-              <ShoppingCart className="h-5 w-5" />
-            </Link>
-            {/* Счетчик айтемов в корзине */}
-            {cartItemsQuantity > 0 && (
-              <span className="-top-1 -right-1 h-5 w-5 bg-primary font-bold text-primary-foreground absolute flex items-center justify-center rounded-full text-[10px]">
-                {cartItemsQuantity}
-              </span>
-            )}
+        <div className="flex">
+          {/* Логин */}
+          {!user && (
+            <div className="gap-4 flex items-center">
+              <div className="p-2 hover:bg-muted relative flex cursor-pointer items-center rounded-full transition-colors">
+                <Link to="/login">
+                  <LogIn />
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {user && (
+            <div
+              className="hover:bg-muted cursor-pointer"
+              title="Личный кабинет"
+            >
+              <Link to="/dashboard">{user.email}</Link>
+            </div>
+          )}
+
+          {user && <LogoutButton />}
+
+          {/* Корзина */}
+          <div className="gap-4 flex items-center">
+            <div
+              className="p-2 hover:bg-muted relative flex cursor-pointer items-center rounded-full transition-colors"
+              title="Корзина"
+            >
+              <Link to="/cart">
+                <ShoppingCart className="h-5 w-5" />
+              </Link>
+              {/* Счетчик айтемов в корзине */}
+              {cartItemsQuantity > 0 && (
+                <span className="-top-1 -right-1 h-5 w-5 bg-primary font-bold text-primary-foreground absolute flex items-center justify-center rounded-full text-[10px]">
+                  {cartItemsQuantity}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
