@@ -1,7 +1,7 @@
 import {create} from 'zustand'
 
 
-interface DBUser {
+export interface DBUser {
     email: string;
     password: string;
 }

@@ -15,7 +15,7 @@ async function fetchBooks(): Promise<Book[]> {
 
 
 
-export function useGetBooks(category:string) {
+export function useGetBooks(category:string = 'All') {
     
     return useQuery({
         queryKey: ['books', category],

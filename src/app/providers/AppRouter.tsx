@@ -13,6 +13,7 @@ import { RegisterPage } from '@/pages/register';
 import { LoginPage } from '@/pages/login';
 import { DashboardPage } from '@/pages/dashboard';
 import { CartContent } from '@/widgets/cart-content';
+import { FavoriteBooksPage } from '@/pages/favorite-books';
 
 // import { AdminPage } from '@/pages/admin/';
 
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
           {
             path: 'cart',
             element: <CartContent />,
+          },
+          {
+            path: 'favorites',
+            element: <FavoriteBooksPage />,
           },
         ],
       },

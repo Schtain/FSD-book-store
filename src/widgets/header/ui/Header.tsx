@@ -64,7 +64,12 @@ export function Header() {
               className="hover:bg-muted cursor-pointer"
               title="Личный кабинет"
             >
-              <Link to="/dashboard">{user.email}</Link>
+              <Link
+                className="px-2 py-1.5 bg-slate-300 hover:bg-slate-800 rounded-xl hover:text-slate-50 my-auto flex flex-col items-center"
+                to="/dashboard"
+              >
+                {user.email}
+              </Link>
             </div>
           )}
 
