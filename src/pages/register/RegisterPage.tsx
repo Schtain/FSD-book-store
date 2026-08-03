@@ -19,7 +19,7 @@ const formSchemaRegister = z
     path: ['password-confirm'],
   });
 
-type RegistrationFormValue = z.infer<typeof formSchemaRegister>;
+type RegistrationFormValues = z.infer<typeof formSchemaRegister>;
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -29,13 +29,27 @@ export function RegisterPage() {
     register,
     handleSubmit,
     setError,
-    formState: { errors },
-  } = useForm<RegistrationFormValue>({
+    formState: { errors, touchedFields, dirtyFields },
+  } = useForm<RegistrationFormValues>({
     resolver: zodResolver(formSchemaRegister),
     mode: 'onTouched',
   });
 
-  const onSubmit = async (data: RegistrationFormValue) => {
+  const getInputValidationClass = (fieldName: keyof RegistrationFormValues) => {
+    const hasError = !!errors[fieldName];
+    const isTouched = !!touchedFields[fieldName];
+    const isDirty = !!dirtyFields[fieldName];
+
+    if (hasError) {
+      return 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/10';
+    }
+    if (isTouched && isDirty && !hasError) {
+      return 'border-emerald-500 text-emerald-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 bg-emerald-50/10';
+    }
+    return 'border-slate-300 focus:ring-blue-500 ';
+  };
+
+  const onSubmit = async (data: RegistrationFormValues) => {
     const setUser = useAuthStore.getState().setUser;
 
     setLoading(true);
@@ -69,7 +83,7 @@ export function RegisterPage() {
   };
 
   const inputStyles =
-    'w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200';
+    'w-full px-3 py-2 bg-slate-50 border rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none transition-all duration-200';
   const labelStyles = 'mb-1 text-sm font-medium text-slate-700';
   const errorStyles = 'text-xs text-red-500 mt-1 font-medium';
 
@@ -88,7 +102,7 @@ export function RegisterPage() {
             id="email"
             {...register('email')}
             placeholder="Email"
-            className={inputStyles}
+            className={`${inputStyles} ${getInputValidationClass('email')}`}
           />
           {errors.email && (
             <span className={errorStyles}>{errors.email.message}</span>
@@ -104,7 +118,7 @@ export function RegisterPage() {
             type="password"
             {...register('password')}
             placeholder="Password"
-            className={inputStyles}
+            className={`${inputStyles} ${getInputValidationClass('password')}`}
           />
           {errors.password && (
             <span className={errorStyles}>{errors.password.message}</span>
@@ -120,7 +134,7 @@ export function RegisterPage() {
             type="password"
             {...register('password-confirm')}
             placeholder="Password-confirm"
-            className={inputStyles}
+            className={`${inputStyles} ${getInputValidationClass('password-confirm')}`}
           />
           {errors['password-confirm'] && (
             <span className={errorStyles}>

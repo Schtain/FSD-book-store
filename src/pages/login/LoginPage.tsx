@@ -23,11 +23,25 @@ export function LoginPage() {
     register,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, touchedFields, dirtyFields },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     mode: 'onTouched',
   });
+
+  const getInputValidationClass = (fieldName: keyof LoginFormValues) => {
+    const hasError = !!errors[fieldName];
+    const isTouched = !!touchedFields[fieldName];
+    const isDirty = !!dirtyFields[fieldName];
+
+    if (hasError) {
+      return 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 bg-red-50/10';
+    }
+    if (isTouched && isDirty && !hasError) {
+      return 'border-emerald-500 text-emerald-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 bg-emerald-50/10';
+    }
+    return 'border-slate-300 focus:ring-blue-500 ';
+  };
 
   async function onSubmit(data: LoginFormValues) {
     const setUser = useAuthStore.getState().setUser;
@@ -65,7 +79,7 @@ export function LoginPage() {
   }
 
   const inputStyles =
-    'w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200';
+    'w-full px-3 py-2 bg-slate-50 border rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none transition-all duration-200';
   const labelStyles = 'mb-1 text-sm font-medium text-slate-700';
   return (
     <AuthLayout title="Вход">
@@ -81,7 +95,7 @@ export function LoginPage() {
             id="email"
             {...register('email')}
             placeholder="Email"
-            className={`${inputStyles} ${errors.email ? 'border-red-400 focus:ring-red-500' : ''}`}
+            className={`${inputStyles} ${getInputValidationClass('email')}`}
           />{' '}
           {/* EMAIL ERRORS DISPLAY */}
           {errors.email && (
@@ -92,17 +106,14 @@ export function LoginPage() {
         </div>
 
         <div className="flex flex-col">
-          <label
-            htmlFor="password"
-            className={`${inputStyles} ${errors.password ? 'border-red-400 focus:ring-red-500' : ''}`}
-          >
+          <label htmlFor="password" className={labelStyles}>
             Password:
           </label>
           <input
             type="password"
             {...register('password')}
             placeholder="Password"
-            className={inputStyles}
+            className={`${inputStyles} ${getInputValidationClass('password')}`}
           />
           {/* PASSWORD ERROR DISPLAY */}
           {errors.password && (
