@@ -1,10 +1,25 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { db } from '@/shared/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { useAuthStore } from '@/features/auth';
 import { AuthLayout } from '@/components';
+import { emailSchema, passwordSchemaRegister } from '@/entities/user';
+
+const formSchemaRegister = z
+  .object({
+    email: emailSchema,
+    password: passwordSchemaRegister,
+    'password-confirm': z.string().min(1, 'Повторите пароль'),
+  })
+  .refine((data) => data.password === data['password-confirm'], {
+    message: 'Пароли не совпадают',
+    path: ['password-confirm'],
+  });
+
+type RegistrationFormValue = z.infer<typeof formSchemaRegister>;
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -15,17 +30,12 @@ export function RegisterPage() {
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm();
+  } = useForm<RegistrationFormValue>({
+    resolver: zodResolver(formSchemaRegister),
+    mode: 'onTouched',
+  });
 
-  const onSubmit = async (data: any) => {
-    if (data.email.trim() === '' || data.password.trim() === '') {
-      return;
-    }
-    if (data.password !== data['password-confirm']) {
-      setError('password-confirm', { message: 'Пароли не совпадают' });
-      return;
-    }
-
+  const onSubmit = async (data: RegistrationFormValue) => {
     const setUser = useAuthStore.getState().setUser;
 
     setLoading(true);
@@ -36,7 +46,7 @@ export function RegisterPage() {
       const checkSnapshot = await getDocs(q);
 
       if (!checkSnapshot.empty) {
-        setError('tmail', { message: 'Данный емейл уже занят' });
+        setError('email', { message: 'Данный емейл уже занят' });
         return;
       }
 
@@ -61,48 +71,65 @@ export function RegisterPage() {
   const inputStyles =
     'w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200';
   const labelStyles = 'mb-1 text-sm font-medium text-slate-700';
+  const errorStyles = 'text-xs text-red-500 mt-1 font-medium';
+
   return (
     <AuthLayout title="Регистрация">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="gap-4 flex w-full flex-col"
       >
+        {/* Поле Email */}
         <div className="flex flex-col">
           <label htmlFor="email" className={labelStyles}>
             Email:
           </label>
           <input
             id="email"
-            {...register('email', { required: true })}
+            {...register('email')}
             placeholder="Email"
             className={inputStyles}
           />
+          {errors.email && (
+            <span className={errorStyles}>{errors.email.message}</span>
+          )}
         </div>
 
+        {/* Поле Пароля */}
         <div className="flex flex-col">
           <label htmlFor="password" className={labelStyles}>
             Password:
           </label>
           <input
             type="password"
-            {...register('password', { required: true })}
+            {...register('password')}
             placeholder="Password"
             className={inputStyles}
           />
+          {errors.password && (
+            <span className={errorStyles}>{errors.password.message}</span>
+          )}
         </div>
 
+        {/* Поле Подтверждения пароля */}
         <div className="flex flex-col">
           <label htmlFor="password-confirm" className={labelStyles}>
             Confirm password:
           </label>
           <input
             type="password"
-            {...register('password-confirm', { required: true })}
+            {...register('password-confirm')}
             placeholder="Password-confirm"
             className={inputStyles}
           />
+          {errors['password-confirm'] && (
+            <span className={errorStyles}>
+              {errors['password-confirm'].message}
+            </span>
+          )}
         </div>
 
+        {/* Кнопка отправки и ссылка */}
         <div className="flex flex-col items-center">
           <button
             type="submit"
@@ -121,9 +148,11 @@ export function RegisterPage() {
             </Link>
           </p>
         </div>
+
+        {/* ОБЩАЯ ОШИБКА */}
         {errors.root && (
           <div className="text-sm bg-red-50 text-red-500 p-2.5 rounded-lg border-red-100 font-medium border text-center">
-            {errors.root.message as string}
+            {errors.root.message}
           </div>
         )}
       </form>

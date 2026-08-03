@@ -1,10 +1,19 @@
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '@/features/auth';
 import { AuthLayout } from '@/components';
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import { emailSchema, passwordSchemaLogin } from '@/entities/user';
 import { db } from '@/shared/api';
+
+const formSchema = z.object({
+  email: emailSchema,
+  password: passwordSchemaLogin,
+});
+
+type LoginFormValues = z.infer<typeof formSchema>;
 
 export function LoginPage() {
   const isLoading = useAuthStore((state) => state.isLoading);
@@ -15,13 +24,12 @@ export function LoginPage() {
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm();
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(formSchema),
+    mode: 'onTouched',
+  });
 
-  async function onSubmit(data: any) {
-    if (data.password.trim() === '' || data.email.trim() === '') {
-      return;
-    }
-
+  async function onSubmit(data: LoginFormValues) {
     const setUser = useAuthStore.getState().setUser;
     setLoading(true);
 
@@ -71,22 +79,37 @@ export function LoginPage() {
           </label>
           <input
             id="email"
-            {...register('email', { required: true })}
+            {...register('email')}
             placeholder="Email"
-            className={inputStyles}
-          />
+            className={`${inputStyles} ${errors.email ? 'border-red-400 focus:ring-red-500' : ''}`}
+          />{' '}
+          {/* EMAIL ERRORS DISPLAY */}
+          {errors.email && (
+            <span className="text-xs text-red-500 mt-1 font-medium">
+              {errors.email.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="password" className={labelStyles}>
+          <label
+            htmlFor="password"
+            className={`${inputStyles} ${errors.password ? 'border-red-400 focus:ring-red-500' : ''}`}
+          >
             Password:
           </label>
           <input
             type="password"
-            {...register('password', { required: true })}
+            {...register('password')}
             placeholder="Password"
             className={inputStyles}
           />
+          {/* PASSWORD ERROR DISPLAY */}
+          {errors.password && (
+            <span className="text-xs text-red-500 mt-1 font-medium">
+              {errors.password.message}
+            </span>
+          )}
         </div>
 
         <div className="flex flex-col items-center">
